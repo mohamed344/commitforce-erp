@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   IMAB design tokens (defaults). Brand color, brand-dark and the
+   font family are overridden at runtime from env in app/layout.tsx.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --brand: #16a34a;
+  --brand-700: #0f7235;
+  --brand-50: #ecfdf3;
+  --brand-100: #d1fadf;
+
+  --ink: #1f2024;
+  --ink-2: #4a4d57;
+  --ink-3: #7a7d88;
+  --ink-4: #a8aab2;
+
+  --line: #ececef;
+  --line-2: #f3f3f5;
+  --bg: #ffffff;
+
+  /* grayed module tile palette (disabled modules) */
+  --tile-bg: #b8bac1;
+  --tile-bg-2: #a3a5ac;
+  --tile-fg: #ffffff;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* Expose tokens as Tailwind v4 utilities (bg-brand, text-ink-2, …). */
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-700: var(--brand-700);
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-bg: var(--bg);
+
+  --color-tile-bg: var(--tile-bg);
+  --color-tile-bg-2: var(--tile-bg-2);
+  --color-tile-fg: var(--tile-fg);
+
+  --font-sans: var(--font-sans);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tailwind v4 ships buttons with the default cursor — restore pointer on all
+   interactive elements, and not-allowed when disabled. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary,
+  select:not(:disabled),
+  [type="checkbox"]:not(:disabled),
+  [type="radio"]:not(:disabled),
+  [type="file"]:not(:disabled) {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"],
+  [type="file"]:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Pulsing status dot in the footer (ported from the prototype). */
+@keyframes brandPulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 50%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--brand) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 0%, transparent);
+  }
+}

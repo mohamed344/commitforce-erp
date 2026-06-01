@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>IMAB — Tableau de bord</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* IMAB green */
+    --brand:      #16a34a;
+    --brand-600:  #128a3f;
+    --brand-700:  #0f7235;
+    --brand-50:   #ecfdf3;
+    --brand-100:  #d1fadf;
+
+    --ink:    #1f2024;
+    --ink-2:  #4a4d57;
+    --ink-3:  #7a7d88;
+    --ink-4:  #a8aab2;
+    --line:   #ececef;
+    --line-2: #f3f3f5;
+    --bg:     #ffffff;
+
+    /* grayed module tile palette */
+    --tile-bg:   #b8bac1;
+    --tile-bg-2: #a3a5ac;
+    --tile-fg:   #ffffff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:20;background:#fff;
+    height:64px;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:0 22px;border-bottom:1px solid var(--line-2);
+  }
+  .top-left{display:flex;align-items:center;gap:10px;justify-self:start}
+  .logo{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--brand) 0%, var(--brand-700) 100%);
+    color:#fff;display:grid;place-items:center;
+    font-weight:700;font-size:12px;letter-spacing:.04em;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,.12);
+  }
+
+  .search{
+    justify-self:center;
+    display:flex;align-items:center;gap:10px;
+    background:#f6f6f8;border:1px solid var(--line);border-radius:10px;
+    padding:9px 14px;width:min(520px, 60vw);color:var(--ink-3);font-size:13.5px;
+  }
+  .search input{
+    border:0;background:transparent;outline:none;width:100%;
+    font:inherit;color:var(--ink);
+  }
+  .search input::placeholder{color:var(--ink-3)}
+  .search .kbd{
+    margin-left:auto;font-family:'Inter',monospace;font-size:11.5px;
+    color:var(--ink-3);font-weight:500;
+  }
+
+  .top-right{display:flex;align-items:center;gap:10px;justify-self:end;position:relative}
+  .user-pill{
+    display:flex;align-items:center;gap:8px;
+    padding:4px 10px 4px 4px;border-radius:999px;
+    background:#fff;border:1px solid var(--line);cursor:pointer;
+    transition:background .15s, border-color .15s;
+    position:relative;
+  }
+  .user-pill:hover,.user-pill.is-open{background:var(--brand-50);border-color:var(--brand-100)}
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:linear-gradient(135deg,#22c55e 0%, var(--brand-700) 100%);
+    color:#fff;font-weight:700;font-size:11px;letter-spacing:.04em;
+    display:grid;place-items:center;
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.18);
+  }
+  .user-name{font-size:13px;font-weight:600;color:var(--ink)}
+  .chev{color:var(--ink-3);transition:transform .2s}
+  .user-pill.is-open .chev{transform:rotate(180deg);color:var(--brand)}
+
+  /* dropdown */
+  .dropdown{
+    position:absolute;top:calc(100% + 8px);right:0;
+    width:280px;background:#fff;border:1px solid var(--line);
+    border-radius:12px;box-shadow:0 12px 32px -8px rgba(20,22,30,.16), 0 2px 6px rgba(20,22,30,.06);
+    padding:6px;z-index:30;text-align:left;
+    opacity:0;transform:translateY(-4px) scale(.98);pointer-events:none;
+    transition:opacity .15s, transform .15s;
+  }
+  .user-pill.is-open .dropdown{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+  .dd-head{
+    padding:12px 12px 10px;display:flex;align-items:center;gap:12px;
+    border-bottom:1px solid var(--line-2);margin-bottom:6px;
+  }
+  .dd-head .avatar{width:36px;height:36px;font-size:12px}
+  .dd-head .nm{font-weight:600;font-size:13px;color:var(--ink);line-height:1.2}
+  .dd-head .em{font-size:11px;color:var(--ink-3);margin-top:2px}
+  .dd-section{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);padding:10px 12px 4px}
+  .dd-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;border-radius:8px;
+    font-size:13px;color:var(--ink-2);cursor:pointer;
+  }
+  .dd-item:hover{background:var(--line-2);color:var(--ink)}
+  .dd-item .ico{color:var(--ink-3);display:grid;place-items:center}
+  .dd-item.is-current{color:var(--ink);font-weight:600}
+  .dd-item.is-current .check{margin-left:auto;color:var(--brand)}
+  .dd-divider{height:1px;background:var(--line-2);margin:6px 0}
+
+  /* ---------- Main grid ---------- */
+  main{
+    min-height:calc(100vh - 64px);
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:120px 24px 80px;
+  }
+
+  .modules{
+    display:flex;flex-wrap:wrap;
+    justify-content:center;
+    gap:36px 40px;
+    max-width:1140px;
+    width:100%;
+  }
+
+  .module{
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    cursor:not-allowed;
+    text-align:center;
+    width:120px;
+  }
+  .tile{
+    width:74px;height:74px;border-radius:18px;
+    background:linear-gradient(180deg, var(--tile-bg) 0%, var(--tile-bg-2) 100%);
+    color:var(--tile-fg);
+    display:grid;place-items:center;
+    box-shadow:0 1px 2px rgba(20,22,30,.08), inset 0 -1px 0 rgba(0,0,0,.08);
+    transition:transform .15s ease, filter .15s;
+  }
+  .module:hover .tile{transform:translateY(-1px);filter:brightness(1.02)}
+
+  .label{
+    font-size:14.5px;font-weight:600;color:var(--ink-2);
+    letter-spacing:-.005em;line-height:1.2;
+  }
+  .sublabel{
+    font-size:11px;color:var(--ink-4);font-weight:500;
+    letter-spacing:.01em;
+  }
+
+  /* tiny status footer */
+  .foot{
+    margin-top:64px;display:flex;align-items:center;gap:8px;
+    font-size:12px;color:var(--ink-4);
+  }
+  .foot .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--brand);
+    box-shadow:0 0 0 0 rgba(22,163,74,.5);
+    animation:pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(22,163,74,.5)}
+    70%{box-shadow:0 0 0 8px rgba(22,163,74,0)}
+    100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}
+  }
+
+  /* responsive topbar */
+  @media (max-width: 720px){
+    .search{width:min(380px, 56vw)}
+    .user-name{display:none}
+  }
+  @media (max-width: 520px){
+    .search{padding:8px 12px;font-size:13px}
+    .search .kbd{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="top-left">
+    <div class="logo" title="IMAB">IM</div>
+  </div>
+
+  <div class="search" role="search">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input placeholder="Rechercher…" aria-label="Rechercher">
+    <span class="kbd">Ctrl + K</span>
+  </div>
+
+  <div class="top-right">
+    <div class="user-pill" id="userPill" role="button" tabindex="0" aria-haspopup="menu" aria-expanded="false">
+      <div class="avatar">IM</div>
+      <div class="user-name">IMAB</div>
+      <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+      <div class="dropdown" role="menu" aria-label="Sélecteur de compte">
+        <div class="dd-head">
+          <div class="avatar">IM</div>
+          <div>
+            <div class="nm">IMAB Engineering</div>
+            <div class="em">admin@imab-engineering.dz</div>
+          </div>
+        </div>
+        <div class="dd-section">Changer de compte</div>
+        <div class="dd-item is-current" role="menuitem">
+          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+          IMAB Engineering
+          <span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        </div>
+        <div class="dd-item" role="menuitem">
+          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>
+          Ajouter un compte
+        </div>
+        <div class="dd-divider"></div>
+        <div class="dd-item" role="menuitem">
+          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+          Paramètres du compte
+        </div>
+        <div class="dd-item" role="menuitem">
+          <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>
+          Se déconnecter
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <section class="modules" aria-label="Modules">
+
+    <!-- STOCK -->
+    <a href="#" class="module" aria-disabled="true" title="Stock — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+      </div>
+      <div class="label">Stock</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- VENTES / ACHATS -->
+    <a href="#" class="module" aria-disabled="true" title="Ventes / Achats — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17l-4-4 4-4"></path>
+          <path d="M3 13h13a4 4 0 0 1 4 4"></path>
+          <path d="M17 7l4 4-4 4"></path>
+          <path d="M21 11H8a4 4 0 0 1-4-4"></path>
+        </svg>
+      </div>
+      <div class="label">Ventes / Achats</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- CRM -->
+    <a href="#" class="module" aria-disabled="true" title="CRM — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div class="label">CRM</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- PRODUCTION -->
+    <a href="#" class="module" aria-disabled="true" title="Production — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 20h20"></path>
+          <path d="M3 20V11l5 3V8l5 3V6l8 5v9"></path>
+          <line x1="10" y1="20" x2="10" y2="16"></line>
+          <line x1="17" y1="20" x2="17" y2="16"></line>
+        </svg>
+      </div>
+      <div class="label">Production</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- PROJETS -->
+    <a href="#" class="module" aria-disabled="true" title="Projets — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <rect x="6" y="12" width="8" height="2.2" rx="1"></rect>
+          <rect x="9" y="16" width="9" height="2.2" rx="1"></rect>
+        </svg>
+      </div>
+      <div class="label">Projets</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- RESSOURCES HUMAINES -->
+    <a href="#" class="module" aria-disabled="true" title="Ressources humaines — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="6" width="18" height="14" rx="2"></rect>
+          <path d="M3 10h18"></path>
+          <circle cx="9" cy="14.5" r="1.8"></circle>
+          <path d="M6.2 18.5a3 3 0 0 1 5.6 0"></path>
+          <line x1="14" y1="14" x2="18" y2="14"></line>
+          <line x1="14" y1="17" x2="17" y2="17"></line>
+        </svg>
+      </div>
+      <div class="label">Ressources humaines</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- RAPPORTS -->
+    <a href="#" class="module" aria-disabled="true" title="Rapports — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="20" x2="20" y2="20"></line>
+          <rect x="6" y="12" width="3" height="8"></rect>
+          <rect x="11" y="8" width="3" height="12"></rect>
+          <rect x="16" y="5" width="3" height="15"></rect>
+        </svg>
+      </div>
+      <div class="label">Rapports</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+    <!-- PARAMÈTRES -->
+    <a href="#" class="module" aria-disabled="true" title="Paramètres — En développement">
+      <div class="tile">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </div>
+      <div class="label">Paramètres</div>
+      <div class="sublabel">En développement</div>
+    </a>
+
+  </section>
+
+  <div class="foot">
+    <span class="dot" aria-hidden="true"></span>
+    <span>IMAB ERP · v0.1.0 — 8 modules en développement</span>
+  </div>
+</main>
+
+<script>
+  (function(){
+    const pill = document.getElementById('userPill');
+    const close = ()=>{ pill.classList.remove('is-open'); pill.setAttribute('aria-expanded','false'); };
+    const open  = ()=>{ pill.classList.add('is-open');    pill.setAttribute('aria-expanded','true');  };
+    pill.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      pill.classList.contains('is-open') ? close() : open();
+    });
+    document.addEventListener('click', (e)=>{ if (!pill.contains(e.target)) close(); });
+    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') close(); });
+  })();
+</script>
+
+</body>
+</html>
