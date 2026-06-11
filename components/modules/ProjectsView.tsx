@@ -7,7 +7,6 @@ import { createClient } from "@/utils/supabase/client";
 import WorkspaceShell from "@/components/data/WorkspaceShell";
 import ListTable, { type Column } from "@/components/data/ListTable";
 import Modal from "@/components/data/Modal";
-import Badge from "@/components/data/Badge";
 import RowActions from "@/components/data/RowActions";
 import { useOptionSet } from "@/components/options/useOptionSet";
 
@@ -99,10 +98,37 @@ export default function ProjectsView() {
     load();
   }
 
+  // Inline status change straight from the list row.
+  async function changeStatus(r: Project, status: string) {
+    if (status === r.status) return;
+    setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, status } : x)));
+    await supabase.from("projects").update({ status }).eq("id", r.id);
+  }
+
   const listCols: Column<Project>[] = [
     { header: t("project.name"), cell: (r) => <span className="font-medium text-ink">{r.name}</span> },
     { header: t("project.code"), cell: (r) => r.code ?? "—" },
-    { header: t("project.status"), cell: (r) => <Badge tone={statusBy.get(r.status)?.tone ?? "gray"}>{statusBy.get(r.status)?.label ?? r.status}</Badge> },
+    {
+      header: t("project.status"),
+      cell: (r) => (
+        <select
+          value={r.status}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => { e.stopPropagation(); changeStatus(r, e.target.value); }}
+          className={`rounded-full border px-2.5 py-1 text-[12px] font-medium outline-none focus:border-brand-100 ${
+            statusBy.get(r.status)?.tone === "green" ? "border-green-200 bg-green-50 text-green-700"
+              : statusBy.get(r.status)?.tone === "blue" ? "border-blue-200 bg-blue-50 text-blue-700"
+              : statusBy.get(r.status)?.tone === "amber" ? "border-amber-200 bg-amber-50 text-amber-700"
+              : statusBy.get(r.status)?.tone === "red" ? "border-red-200 bg-red-50 text-red-700"
+              : "border-line bg-[#f6f6f8] text-ink-2"
+          }`}
+        >
+          {statusOptions.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+      ),
+    },
     { header: t("project.startDate"), cell: (r) => r.start_date ?? "—" },
     { header: t("project.endDate"), cell: (r) => r.end_date ?? "—" },
   ];

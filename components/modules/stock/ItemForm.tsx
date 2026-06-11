@@ -78,32 +78,21 @@ export default function ItemForm({ itemId }: { itemId?: string }) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Stock quantity (per warehouse). Editing this posts an adjustment entry.
-  const [whs, setWhs] = useState<Opt[]>([]);
-  const [balByWh, setBalByWh] = useState<Map<string, number>>(new Map());
-  const [stockWh, setStockWh] = useState("");
-  const [qtyOnHand, setQtyOnHand] = useState("0");
-
   useEffect(() => {
     (async () => {
-      const [{ data: c }, { data: b }, { data: u }, { data: a }, { data: v }, { data: tpl }, { data: w }] = await Promise.all([
+      const [{ data: c }, { data: b }, { data: u }, { data: a }, { data: v }, { data: tpl }] = await Promise.all([
         supabase.from("categories").select("id,name").order("name"),
         supabase.from("brands").select("id,name").order("name"),
         supabase.from("uoms").select("id,name").order("name"),
         supabase.from("item_attributes").select("id,name").order("name"),
         supabase.from("item_attribute_values").select("id,attribute_id,value").order("sort_order"),
         supabase.from("items").select("id,name").eq("item_type", "template").order("name"),
-        supabase.from("warehouses").select("id,name").order("name"),
       ]);
       setCats((c as Opt[]) ?? []);
       setBrands((b as Opt[]) ?? []);
       setUoms((u as Opt[]) ?? []);
       setAttributes((a as Attr[]) ?? []);
       setTemplates((tpl as Opt[]) ?? []);
-      const warehouses = (w as Opt[]) ?? [];
-      setWhs(warehouses);
-      const firstWh = warehouses[0]?.id ?? "";
-      setStockWh(firstWh);
       const map: Record<string, Val[]> = {};
       ((v as Val[]) ?? []).forEach((row) => {
         (map[row.attribute_id] ??= []).push(row);
@@ -127,30 +116,6 @@ export default function ItemForm({ itemId }: { itemId?: string }) {
           setImagePreview(r.image_url ? String(r.image_url) : null);
         }
 
-        // Current on-hand per warehouse for this item (drives the quantity field).
-        const { data: bal } = await supabase
-          .from("stock_balances")
-          .select("warehouse_id,qty")
-          .eq("item_id", itemId);
-        const byWh = new Map<string, number>();
-        for (const row of (bal as { warehouse_id: string; qty: number }[]) ?? []) {
-          byWh.set(row.warehouse_id, Number(row.qty));
-        }
-        setBalByWh(byWh);
-        // Default to the warehouse that actually holds this item's stock (the
-        // one with the largest balance), so the qty doesn't read 0 just because
-        // the first warehouse alphabetically happens to be empty.
-        let bestWh = firstWh;
-        let bestQty = -Infinity;
-        for (const wh of warehouses) {
-          const q = byWh.get(wh.id) ?? 0;
-          if (q > bestQty) {
-            bestQty = q;
-            bestWh = wh.id;
-          }
-        }
-        setStockWh(bestWh);
-        setQtyOnHand(String(byWh.get(bestWh) ?? 0));
         const [{ data: sp }, { data: ta }, { count }] = await Promise.all([
           supabase.from("item_specs").select("id,label,value").eq("item_id", itemId).order("sort_order"),
           supabase.from("template_attributes").select("attribute_id").eq("item_id", itemId),
@@ -183,11 +148,6 @@ export default function ItemForm({ itemId }: { itemId?: string }) {
     setImagePreview(null);
     setForm((f) => ({ ...f, image_url: "" }));
     if (fileRef.current) fileRef.current.value = "";
-  }
-
-  function onWarehouseChange(id: string) {
-    setStockWh(id);
-    setQtyOnHand(String(balByWh.get(id) ?? 0));
   }
 
   async function save(e: React.FormEvent) {
@@ -240,33 +200,6 @@ export default function ItemForm({ itemId }: { itemId?: string }) {
       const { data, error } = await supabase.from("items").insert(payload).select("id").single();
       if (error || !data) throw error ?? new Error("insert failed");
       id = (data as { id: string }).id;
-    }
-
-    // Quantity: post a stock adjustment for the delta vs the current on-hand
-    // at the selected warehouse (receipt when increasing, issue when decreasing).
-    if (stockWh) {
-      const desired = Number(qtyOnHand || 0);
-      const current = balByWh.get(stockWh) ?? 0;
-      const delta = desired - current;
-      if (Math.abs(delta) > 1e-9) {
-        const isReceipt = delta > 0;
-        const { data: ent, error: entErr } = await supabase
-          .from("stock_entries")
-          .insert({ entry_type: isReceipt ? "receipt" : "issue", reference: `ADJ-${payload.sku ?? payload.name}` })
-          .select("id")
-          .single();
-        if (entErr) throw entErr;
-        const entryId = (ent as { id: string }).id;
-        const { error: lineErr } = await supabase.from("stock_entry_lines").insert({
-          stock_entry_id: entryId,
-          item_id: id,
-          qty: Math.abs(delta),
-          rate: payload.valuation_rate,
-          source_warehouse_id: isReceipt ? null : stockWh,
-          target_warehouse_id: isReceipt ? stockWh : null,
-        });
-        if (lineErr) throw lineErr;
-      }
     }
 
     // specs: replace all
@@ -475,29 +408,6 @@ export default function ItemForm({ itemId }: { itemId?: string }) {
 
       {/* Stock */}
       <Section title={t("sections.stock")}>
-        {whs.length > 0 ? (
-          <div className="mb-4 grid items-end gap-3 sm:grid-cols-3">
-            <label className={labelCls}>
-              {t("warehouse")}
-              <select value={stockWh} onChange={(e) => onWarehouseChange(e.target.value)} className={field}>
-                {whs.map((w) => (
-                  <option key={w.id} value={w.id}>{w.name}</option>
-                ))}
-              </select>
-            </label>
-            <label className={labelCls}>
-              {t("onHand")}
-              <input type="number" step="0.001" value={qtyOnHand} onChange={(e) => setQtyOnHand(e.target.value)} className={field} />
-              <span className="text-[11px] font-normal text-ink-4">
-                {t("currentHere", { qty: balByWh.get(stockWh) ?? 0 })}
-                {whs.length > 1 && <> · {t("totalAllWh", { qty: Array.from(balByWh.values()).reduce((a, b) => a + b, 0) })}</>}
-              </span>
-            </label>
-            <p className="pb-2 text-[11px] text-ink-4">{t("qtyHint")}</p>
-          </div>
-        ) : (
-          <p className="mb-4 text-[12px] text-ink-4">{t("noWarehouses")}</p>
-        )}
         <div className="grid gap-3 sm:grid-cols-3">
           <label className={labelCls}>{t("reorderLevel")}<input type="number" step="0.01" value={form.reorder_level} onChange={(e) => setForm({ ...form, reorder_level: e.target.value })} className={field} /></label>
           <label className={labelCls}>{t("reorderQty")}<input type="number" step="0.01" value={form.reorder_qty} onChange={(e) => setForm({ ...form, reorder_qty: e.target.value })} className={field} /></label>

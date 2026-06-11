@@ -35,7 +35,9 @@
     "signUp": "Sign up",
     "toSignUp": "No account? Sign up",
     "toSignIn": "Already have an account? Sign in",
-    "signingIn": "Signing in…"
+    "signingIn": "Signing in…",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "company": {
     "newTitle": "New company",
@@ -99,18 +101,48 @@
     "masterData": "Master data",
     "masterDataDesc": "Manage stock reference lists.",
     "cards": {
-      "general": { "title": "General", "desc": "App name, branding, logo, modules and language." },
-      "crm": { "title": "CRM", "desc": "Lead pipeline stages." },
-      "projects": { "title": "Projects", "desc": "Project status options." },
-      "stock": { "title": "Stock", "desc": "Entry types and master data." },
-      "products": { "title": "Products", "desc": "Item types." },
-      "roles": { "title": "Roles & team", "desc": "Create custom roles for your company." }
+      "general": {
+        "title": "General",
+        "desc": "App name, branding, logo, modules and language."
+      },
+      "crm": {
+        "title": "CRM",
+        "desc": "Lead pipeline stages."
+      },
+      "projects": {
+        "title": "Projects",
+        "desc": "Project status options."
+      },
+      "stock": {
+        "title": "Stock",
+        "desc": "Entry types and master data."
+      },
+      "products": {
+        "title": "Products",
+        "desc": "Item types."
+      },
+      "roles": {
+        "title": "Roles & team",
+        "desc": "Create custom roles for your company."
+      }
     },
     "sets": {
-      "crm_stage": { "title": "Lead stages", "desc": "Customize the CRM pipeline columns — add, rename, recolor and reorder." },
-      "project_status": { "title": "Project statuses", "desc": "Customize the project status options." },
-      "stock_entry_type": { "title": "Stock entry types", "desc": "Relabel, recolor and reorder the movement types. The keys are fixed because they drive the stock ledger." },
-      "item_type": { "title": "Item types", "desc": "Relabel and recolor the item types. Template and Variant keys are fixed." }
+      "crm_stage": {
+        "title": "Lead stages",
+        "desc": "Customize the CRM pipeline columns — add, rename, recolor and reorder."
+      },
+      "project_status": {
+        "title": "Project statuses",
+        "desc": "Customize the project status options."
+      },
+      "stock_entry_type": {
+        "title": "Stock entry types",
+        "desc": "Relabel, recolor and reorder the movement types. The keys are fixed because they drive the stock ledger."
+      },
+      "item_type": {
+        "title": "Item types",
+        "desc": "Relabel and recolor the item types. Template and Variant keys are fixed."
+      }
     },
     "options": {
       "label": "Label",
@@ -148,10 +180,81 @@
     "edit": "Edit",
     "delete": "Delete",
     "confirmDelete": "Delete this item?",
-    "back": "Back"
+    "back": "Back",
+    "next": "Next"
   },
   "project": {
     "newTitle": "New project",
+    "clientName": "Client",
+    "clientEmail": "Client email",
+    "clientPhone": "Client phone",
+    "clientAddress": "Client address",
+    "dailyRate": "Daily rate",
+    "customer": "Customer",
+    "taxId": "Tax ID",
+    "manager": "Project manager",
+    "budget": "Estimated budget",
+    "currency": "Currency",
+    "siteAddress": "Work site",
+    "deadline": "Deadline",
+    "paymentTerms": "Payment terms",
+    "type": "Type",
+    "priority": "Priority",
+    "sections": {
+      "project": "Project",
+      "client": "Client",
+      "planning": "Planning",
+      "financial": "Financial"
+    },
+    "types": {
+      "installation": "Installation",
+      "maintenance": "Maintenance",
+      "etude": "Study",
+      "travaux": "Works",
+      "renovation": "Renovation"
+    },
+    "priorities": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "advancement": "Advancement",
+    "logStep": "Log step",
+    "noSteps": "No steps yet",
+    "stepType": "Type",
+    "when": "When",
+    "byAgent": "by",
+    "materials": "Materials (from Excel)",
+    "importExcel": "Import Excel",
+    "importCsv": "Import CSV",
+    "downloadCsv": "Download CSV",
+    "lineTotal": "Line total",
+    "importing": "Importing…",
+    "importHint": "Upload a CSV of items (columns: designation, reference, quantity, unit). The same file is returned with unit price, stock quantity, line total and an availability note added per row.",
+    "reimport": "Re-import Excel",
+    "noMaterials": "No materials imported yet",
+    "designation": "Designation",
+    "reference": "Reference",
+    "requiredQty": "Required",
+    "inStock": "In stock",
+    "lineStatus": "Status",
+    "importSummary": "{matched} in stock · {insufficient} insufficient · {notFound} not in stock",
+    "activityTypes": {
+      "call": "Call",
+      "meeting": "Meeting",
+      "email": "Email",
+      "note": "Note",
+      "milestone": "Milestone",
+      "stage_change": "Stage change",
+      "materials_imported": "Materials imported"
+    },
+    "materialStatuses": {
+      "in_stock": "In stock",
+      "insufficient": "Insufficient stock",
+      "not_found": "Not in stock",
+      "needs_price": "Needs price"
+    },
     "name": "Name",
     "code": "Code",
     "status": "Status",
@@ -164,7 +267,7 @@
     "unit": "Unit",
     "unitPrice": "Unit price",
     "amount": "Amount",
-    "noProducts": "No products for this project",
+    "noProducts": "No products yet — create a bon de commande (chiffrage) for this project to list what it needs.",
     "consumed": "Consumed",
     "remaining": "Remaining",
     "required": "Required",
@@ -174,18 +277,107 @@
     "chooseWarehouse": "Source warehouse",
     "issueNow": "Issue now",
     "nothingToConsume": "Everything required has already been consumed.",
+    "purchasePrices": "Purchase prices",
+    "avgCost": "Average cost",
+    "purchasedQty": "Purchased qty",
+    "noPurchasePrices": "No purchase linked to this project for this item",
+    "purchaseOrders": "Bons de commande (chiffrage)",
+    "noPurchaseOrders": "No chiffrage yet for this project",
     "statuses": {
+      "nouveau": "New",
+      "chiffrage": "Costing",
+      "devis_envoye": "Quote sent",
+      "gagne": "Won",
+      "en_cours": "In progress",
+      "termine": "Completed",
+      "perdu": "Lost",
       "planning": "Planning",
       "active": "Active",
       "on_hold": "On hold",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "tabs": {
+      "overview": "Overview",
+      "qte": "QTE / Materials",
+      "consultation": "Consultation",
+      "labor": "Labor",
+      "estimate": "Estimate"
+    },
+    "qte": "QTE",
+    "addQteLine": "Add QTE line",
+    "editQteLine": "Edit QTE line",
+    "materialsOf": "materials",
+    "addMaterial": "Add material",
+    "editMaterial": "Edit material",
+    "noMaterialsLine": "No materials yet — add one or import a file.",
+    "ungroupedMaterials": "Ungrouped materials",
+    "matchedItem": "Stock item",
+    "noItemMatch": "— No match —",
+    "autoPrice": "Auto-price",
+    "autoPriced": "Auto-priced {count} line(s) from stock.",
+    "qteHint": "No QTE yet. Upload a C.D.C, import a CSV/Excel, or add a QTE line manually.",
+    "defaultQteLine": "General",
+    "importSummaryGroups": "Imported {lines} material line(s) across {groups} QTE line(s).",
+    "notes": "Notes",
+    "cdcUpload": "Upload C.D.C",
+    "aiNotConfigured": "AI extraction is not configured yet — import a CSV/Excel or add lines manually.",
+    "consultation": "Consultation",
+    "itemsToPrice": "items to price",
+    "noConsultation": "No items need a price — every material is priced.",
+    "supplierPrice": "Supplier price",
+    "savePrice": "Save",
+    "noPriceYet": "No price",
+    "invalidPrice": "Invalid price",
+    "printConsultation": "Print consultation",
+    "consultationHint": "Entering a price updates the material and the item's buying rate in stock.",
+    "prestations": "Labor (prestations)",
+    "labor": "Labor",
+    "days": "Days",
+    "addLabor": "Add labor",
+    "editLabor": "Edit labor",
+    "noLabor": "No labor lines yet.",
+    "laborTotal": "Labor total",
+    "estimate": "Estimate",
+    "materialsTotal": "Materials total",
+    "subtotal": "Subtotal",
+    "margin": "Margin",
+    "transport": "Transport",
+    "marginAmount": "Margin amount",
+    "grandTotal": "Grand total",
+    "saveFooter": "Save margin/transport",
+    "saveEstimate": "Save estimate",
+    "savedEstimates": "Saved estimates",
+    "noEstimates": "No saved estimates yet.",
+    "printDevis": "Print quote",
+    "devis": "Quote",
+    "ficheConsultation": "Consultation sheet",
+    "steps": {
+      "overview": "Project & client",
+      "qte": "Scan C.D.C · QTE · auto-price",
+      "consultation": "Missing prices",
+      "labor": "Labor",
+      "estimate": "Margin · quote"
+    },
+    "cdcScanned": "Scanned the C.D.C — {count} QTE line(s) extracted.",
+    "cdcNoLines": "No line items found in the document.",
+    "facture": "Invoice / Offer",
+    "printFacture": "Print invoice",
+    "offerRef": "Offer no.",
+    "offerRefPlaceholder": "e.g. OFF-2026-001",
+    "offerValidity": "Validity",
+    "offerValidityPlaceholder": "e.g. valid 30 days",
+    "offerNotes": "Remarks",
+    "materialsBuyingTotal": "Materials (purchase)",
+    "materialsSellingTotal": "Materials (sale)",
+    "buyingPrice": "Purchase price",
+    "sellingPrice": "Sale price"
   },
   "sales": {
     "tabs": {
       "salesInvoices": "Sales invoices",
-      "purchaseInvoices": "Purchase invoices",
+      "purchaseOrders": "Purchase orders",
+      "purchaseInvoices": "Purchase vouchers",
       "customers": "Customers",
       "suppliers": "Suppliers"
     },
@@ -236,6 +428,36 @@
       "draft": "Draft",
       "validated": "Validated",
       "cancelled": "Cancelled"
+    },
+    "newPurchaseOrder": "New chiffrage",
+    "orderNo": "Order no.",
+    "orderDate": "Date",
+    "chiffrageDate": "Chiffrage date",
+    "noOrders": "No bons de commande",
+    "requestedQty": "Requested",
+    "onHand": "On hand",
+    "inStock": "In stock",
+    "missing": "Missing",
+    "submitForReview": "Submit for review",
+    "submitting": "Submitting…",
+    "reopenToEdit": "Reopen to edit",
+    "markReviewed": "Mark reviewed",
+    "marking": "Saving…",
+    "generatePurchaseInvoice": "Generate purchase voucher",
+    "generating": "Generating…",
+    "generateHint": "Creates a draft purchase voucher for the missing quantities, from the chosen supplier.",
+    "nothingToPurchase": "Nothing to purchase — every line is fully in stock.",
+    "selectSupplier": "Pick a supplier first.",
+    "noLinesToReview": "Add at least one product before submitting.",
+    "convertToInvoice": "Convert to purchase voucher",
+    "converting": "Converting…",
+    "viewPurchaseInvoice": "View purchase voucher",
+    "poStatuses": {
+      "draft": "Draft",
+      "pending_review": "Pending review",
+      "reviewed": "Reviewed",
+      "converted": "Converted",
+      "cancelled": "Cancelled"
     }
   },
   "roles": {
@@ -245,7 +467,17 @@
     "label": "Role name",
     "key": "Key",
     "description": "Description",
-    "noRoles": "No custom roles yet"
+    "noRoles": "No custom roles yet",
+    "permissions": "Permissions",
+    "module": "Module",
+    "selectAll": "Select all",
+    "clearAll": "Clear all",
+    "actions": {
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
   },
   "hr": {
     "title": "Employees",
@@ -258,6 +490,9 @@
     "email": "Email",
     "status": "Status",
     "role": "Role",
+    "createRole": "Create a role…",
+    "roleName": "Role name",
+    "add": "Add",
     "userAccount": "User account",
     "noUser": "None",
     "noRole": "None",
@@ -278,6 +513,22 @@
     "value": "Value",
     "stage": "Stage",
     "notes": "Notes",
+    "save": "Save",
+    "saving": "Saving…",
+    "activities": "Activity",
+    "logActivity": "Log activity",
+    "activityType": "Type",
+    "when": "When",
+    "description": "Description",
+    "agent": "by",
+    "noActivities": "No activity yet",
+    "types": {
+      "call": "Call",
+      "meeting": "Meeting",
+      "email": "Email",
+      "note": "Note",
+      "stage_change": "Stage change"
+    },
     "stages": {
       "new": "New",
       "contacted": "Contacted",
@@ -295,7 +546,10 @@
     "uom": "Unit",
     "template": "Template",
     "noCategory": "No category",
-    "types": { "template": "Template", "variant": "Variant" },
+    "types": {
+      "template": "Template",
+      "variant": "Variant"
+    },
     "newCategory": "New category",
     "categoryName": "Category name",
     "addCategory": "Add"
@@ -351,6 +605,11 @@
     "reorderQty": "Reorder qty",
     "minOrderQty": "Min order qty",
     "openingStock": "Opening stock",
+    "purchaseHistory": "Purchase price history",
+    "purchasePrice": "Purchase price",
+    "remainingQty": "Remaining in stock",
+    "noPurchases": "No purchases recorded for this item",
+    "onHandLayers": "Cost layers on hand (FIFO)",
     "sections": {
       "general": "General",
       "variants": "Variants",

@@ -35,7 +35,9 @@
     "signUp": "S'inscrire",
     "toSignUp": "Pas de compte ? Inscrivez-vous",
     "toSignIn": "Déjà un compte ? Connectez-vous",
-    "signingIn": "Connexion…"
+    "signingIn": "Connexion…",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe"
   },
   "company": {
     "newTitle": "Nouvelle entreprise",
@@ -99,18 +101,48 @@
     "masterData": "Données de référence",
     "masterDataDesc": "Gérer les listes de référence du stock.",
     "cards": {
-      "general": { "title": "Général", "desc": "Nom de l'application, identité, logo, modules et langue." },
-      "crm": { "title": "CRM", "desc": "Étapes du pipeline commercial." },
-      "projects": { "title": "Projets", "desc": "Statuts de projet." },
-      "stock": { "title": "Stock", "desc": "Types d'écriture et données de référence." },
-      "products": { "title": "Produits", "desc": "Types d'article." },
-      "roles": { "title": "Rôles & équipe", "desc": "Créez des rôles personnalisés pour votre entreprise." }
+      "general": {
+        "title": "Général",
+        "desc": "Nom de l'application, identité, logo, modules et langue."
+      },
+      "crm": {
+        "title": "CRM",
+        "desc": "Étapes du pipeline commercial."
+      },
+      "projects": {
+        "title": "Projets",
+        "desc": "Statuts de projet."
+      },
+      "stock": {
+        "title": "Stock",
+        "desc": "Types d'écriture et données de référence."
+      },
+      "products": {
+        "title": "Produits",
+        "desc": "Types d'article."
+      },
+      "roles": {
+        "title": "Rôles & équipe",
+        "desc": "Créez des rôles personnalisés pour votre entreprise."
+      }
     },
     "sets": {
-      "crm_stage": { "title": "Étapes de prospect", "desc": "Personnalisez les colonnes du pipeline CRM — ajouter, renommer, recolorer et réordonner." },
-      "project_status": { "title": "Statuts de projet", "desc": "Personnalisez les statuts de projet." },
-      "stock_entry_type": { "title": "Types d'écriture de stock", "desc": "Renommez, recolorez et réordonnez les types de mouvement. Les clés sont fixes car elles pilotent le grand livre de stock." },
-      "item_type": { "title": "Types d'article", "desc": "Renommez et recolorez les types d'article. Les clés Modèle et Variante sont fixes." }
+      "crm_stage": {
+        "title": "Étapes de prospect",
+        "desc": "Personnalisez les colonnes du pipeline CRM — ajouter, renommer, recolorer et réordonner."
+      },
+      "project_status": {
+        "title": "Statuts de projet",
+        "desc": "Personnalisez les statuts de projet."
+      },
+      "stock_entry_type": {
+        "title": "Types d'écriture de stock",
+        "desc": "Renommez, recolorez et réordonnez les types de mouvement. Les clés sont fixes car elles pilotent le grand livre de stock."
+      },
+      "item_type": {
+        "title": "Types d'article",
+        "desc": "Renommez et recolorez les types d'article. Les clés Modèle et Variante sont fixes."
+      }
     },
     "options": {
       "label": "Libellé",
@@ -148,10 +180,81 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "confirmDelete": "Supprimer cet élément ?",
-    "back": "Retour"
+    "back": "Retour",
+    "next": "Suivant"
   },
   "project": {
     "newTitle": "Nouveau projet",
+    "clientName": "Client",
+    "clientEmail": "E-mail du client",
+    "clientPhone": "Téléphone du client",
+    "clientAddress": "Adresse du client",
+    "dailyRate": "Taux journalier",
+    "customer": "Client",
+    "taxId": "NIF / RC",
+    "manager": "Chef de projet",
+    "budget": "Budget estimé",
+    "currency": "Devise",
+    "siteAddress": "Chantier",
+    "deadline": "Échéance",
+    "paymentTerms": "Conditions de paiement",
+    "type": "Type",
+    "priority": "Priorité",
+    "sections": {
+      "project": "Projet",
+      "client": "Client",
+      "planning": "Planification",
+      "financial": "Financier"
+    },
+    "types": {
+      "installation": "Installation",
+      "maintenance": "Maintenance",
+      "etude": "Étude",
+      "travaux": "Travaux",
+      "renovation": "Rénovation"
+    },
+    "priorities": {
+      "low": "Basse",
+      "normal": "Normale",
+      "high": "Haute",
+      "urgent": "Urgente"
+    },
+    "advancement": "Avancement",
+    "logStep": "Ajouter une étape",
+    "noSteps": "Aucune étape pour l'instant",
+    "stepType": "Type",
+    "when": "Quand",
+    "byAgent": "par",
+    "materials": "Matériaux (depuis Excel)",
+    "importExcel": "Importer Excel",
+    "importCsv": "Importer CSV",
+    "downloadCsv": "Télécharger CSV",
+    "lineTotal": "Total ligne",
+    "importing": "Importation…",
+    "importHint": "Importez un CSV d'articles (colonnes : désignation, référence, quantité, unité). Le même fichier est renvoyé avec, pour chaque ligne, le prix unitaire, la quantité en stock, le total de ligne et une note de disponibilité.",
+    "reimport": "Réimporter Excel",
+    "noMaterials": "Aucun matériau importé",
+    "designation": "Désignation",
+    "reference": "Référence",
+    "requiredQty": "Requis",
+    "inStock": "En stock",
+    "lineStatus": "Statut",
+    "importSummary": "{matched} en stock · {insufficient} insuffisant · {notFound} hors stock",
+    "activityTypes": {
+      "call": "Appel",
+      "meeting": "Réunion",
+      "email": "E-mail",
+      "note": "Note",
+      "milestone": "Jalon",
+      "stage_change": "Changement d'étape",
+      "materials_imported": "Matériaux importés"
+    },
+    "materialStatuses": {
+      "in_stock": "En stock",
+      "insufficient": "Stock insuffisant",
+      "not_found": "Hors stock",
+      "needs_price": "À consulter"
+    },
     "name": "Nom",
     "code": "Code",
     "status": "Statut",
@@ -164,7 +267,7 @@
     "unit": "Unité",
     "unitPrice": "Prix unitaire",
     "amount": "Montant",
-    "noProducts": "Aucun produit pour ce projet",
+    "noProducts": "Aucun produit — créez un bon de commande (chiffrage) pour ce projet afin de lister ses besoins.",
     "consumed": "Consommé",
     "remaining": "Restant",
     "required": "Requis",
@@ -174,18 +277,107 @@
     "chooseWarehouse": "Entrepôt source",
     "issueNow": "À sortir",
     "nothingToConsume": "Tout le nécessaire a déjà été consommé.",
+    "purchasePrices": "Prix d'achat",
+    "avgCost": "Coût moyen",
+    "purchasedQty": "Qté achetée",
+    "noPurchasePrices": "Aucun achat lié à ce projet pour cet article",
+    "purchaseOrders": "Bons de commande (chiffrage)",
+    "noPurchaseOrders": "Aucun chiffrage pour ce projet",
     "statuses": {
+      "nouveau": "Nouveau",
+      "chiffrage": "Chiffrage",
+      "devis_envoye": "Devis envoyé",
+      "gagne": "Gagné",
+      "en_cours": "En cours",
+      "termine": "Terminé",
+      "perdu": "Perdu",
       "planning": "Planification",
       "active": "Actif",
       "on_hold": "En pause",
       "completed": "Terminé",
       "cancelled": "Annulé"
-    }
+    },
+    "tabs": {
+      "overview": "Aperçu",
+      "qte": "QTE / Matériel",
+      "consultation": "Consultation",
+      "labor": "Prestations",
+      "estimate": "Chiffrage"
+    },
+    "qte": "QTE",
+    "addQteLine": "Ajouter une ligne QTE",
+    "editQteLine": "Modifier la ligne QTE",
+    "materialsOf": "matériaux",
+    "addMaterial": "Ajouter un matériel",
+    "editMaterial": "Modifier le matériel",
+    "noMaterialsLine": "Aucun matériel — ajoutez-en un ou importez un fichier.",
+    "ungroupedMaterials": "Matériaux non groupés",
+    "matchedItem": "Article du stock",
+    "noItemMatch": "— Aucune correspondance —",
+    "autoPrice": "Prix auto",
+    "autoPriced": "{count} ligne(s) tarifée(s) depuis le stock.",
+    "qteHint": "Aucune QTE. Importez un C.D.C, un CSV/Excel, ou ajoutez une ligne QTE manuellement.",
+    "defaultQteLine": "Général",
+    "importSummaryGroups": "{lines} ligne(s) de matériel importée(s) dans {groups} ligne(s) QTE.",
+    "notes": "Notes",
+    "cdcUpload": "Importer le C.D.C",
+    "aiNotConfigured": "L'extraction IA n'est pas encore configurée — importez un CSV/Excel ou ajoutez les lignes manuellement.",
+    "consultation": "Consultation",
+    "itemsToPrice": "articles à tarifer",
+    "noConsultation": "Aucun article à tarifer — tout le matériel est tarifé.",
+    "supplierPrice": "Prix fournisseur",
+    "savePrice": "Enregistrer",
+    "noPriceYet": "Sans prix",
+    "invalidPrice": "Prix invalide",
+    "printConsultation": "Imprimer la consultation",
+    "consultationHint": "Saisir un prix met à jour le matériel et le prix d'achat de l'article en stock.",
+    "prestations": "Prestations",
+    "labor": "Main d'œuvre",
+    "days": "Jours",
+    "addLabor": "Ajouter une prestation",
+    "editLabor": "Modifier la prestation",
+    "noLabor": "Aucune prestation.",
+    "laborTotal": "Total prestations",
+    "estimate": "Chiffrage",
+    "materialsTotal": "Total matériel",
+    "subtotal": "Sous-total",
+    "margin": "Marge",
+    "transport": "Transport",
+    "marginAmount": "Montant de la marge",
+    "grandTotal": "Total général",
+    "saveFooter": "Enregistrer marge/transport",
+    "saveEstimate": "Enregistrer le chiffrage",
+    "savedEstimates": "Chiffrages enregistrés",
+    "noEstimates": "Aucun chiffrage enregistré.",
+    "printDevis": "Imprimer le devis",
+    "devis": "Devis",
+    "ficheConsultation": "Fiche de consultation",
+    "steps": {
+      "overview": "Projet & client",
+      "qte": "Scan C.D.C · QTE · prix auto",
+      "consultation": "Prix manquants",
+      "labor": "Main d'œuvre",
+      "estimate": "Marge · devis"
+    },
+    "cdcScanned": "C.D.C scanné — {count} ligne(s) QTE extraite(s).",
+    "cdcNoLines": "Aucune ligne détectée dans le document.",
+    "facture": "Facture / Offre",
+    "printFacture": "Imprimer la facture",
+    "offerRef": "N° offre",
+    "offerRefPlaceholder": "ex. OFF-2026-001",
+    "offerValidity": "Validité",
+    "offerValidityPlaceholder": "ex. valable 30 jours",
+    "offerNotes": "Remarques",
+    "materialsBuyingTotal": "Matériel (prix d'achat)",
+    "materialsSellingTotal": "Matériel (prix de vente)",
+    "buyingPrice": "Prix d'achat",
+    "sellingPrice": "Prix de vente"
   },
   "sales": {
     "tabs": {
       "salesInvoices": "Factures de vente",
-      "purchaseInvoices": "Factures d'achat",
+      "purchaseOrders": "Bons de commande",
+      "purchaseInvoices": "Bons d'achat",
       "customers": "Clients",
       "suppliers": "Fournisseurs"
     },
@@ -236,6 +428,36 @@
       "draft": "Brouillon",
       "validated": "Validée",
       "cancelled": "Annulée"
+    },
+    "newPurchaseOrder": "Nouveau chiffrage",
+    "orderNo": "N° de commande",
+    "orderDate": "Date",
+    "chiffrageDate": "Date de chiffrage",
+    "noOrders": "Aucun bon de commande",
+    "requestedQty": "Demandé",
+    "onHand": "En stock (réel)",
+    "inStock": "En stock",
+    "missing": "Manquant",
+    "submitForReview": "Soumettre pour vérification",
+    "submitting": "Envoi…",
+    "reopenToEdit": "Rouvrir pour modifier",
+    "markReviewed": "Marquer vérifié",
+    "marking": "Enregistrement…",
+    "generatePurchaseInvoice": "Générer le bon d'achat",
+    "generating": "Génération…",
+    "generateHint": "Crée un bon d'achat (brouillon) pour les quantités manquantes, auprès du fournisseur choisi.",
+    "nothingToPurchase": "Rien à acheter — chaque ligne est entièrement en stock.",
+    "selectSupplier": "Choisissez d'abord un fournisseur.",
+    "noLinesToReview": "Ajoutez au moins un article avant de soumettre.",
+    "convertToInvoice": "Convertir en bon d'achat",
+    "converting": "Conversion…",
+    "viewPurchaseInvoice": "Voir le bon d'achat",
+    "poStatuses": {
+      "draft": "Brouillon",
+      "pending_review": "En attente de vérification",
+      "reviewed": "Vérifié",
+      "converted": "Converti",
+      "cancelled": "Annulé"
     }
   },
   "roles": {
@@ -245,7 +467,17 @@
     "label": "Nom du rôle",
     "key": "Clé",
     "description": "Description",
-    "noRoles": "Aucun rôle personnalisé pour le moment"
+    "noRoles": "Aucun rôle personnalisé pour le moment",
+    "permissions": "Permissions",
+    "module": "Module",
+    "selectAll": "Tout sélectionner",
+    "clearAll": "Tout effacer",
+    "actions": {
+      "view": "Voir",
+      "create": "Créer",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
   },
   "hr": {
     "title": "Employés",
@@ -258,6 +490,9 @@
     "email": "E-mail",
     "status": "Statut",
     "role": "Rôle",
+    "createRole": "Créer un rôle…",
+    "roleName": "Nom du rôle",
+    "add": "Ajouter",
     "userAccount": "Compte utilisateur",
     "noUser": "Aucun",
     "noRole": "Aucun",
@@ -278,6 +513,22 @@
     "value": "Valeur",
     "stage": "Étape",
     "notes": "Notes",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "activities": "Activité",
+    "logActivity": "Enregistrer une activité",
+    "activityType": "Type",
+    "when": "Quand",
+    "description": "Description",
+    "agent": "par",
+    "noActivities": "Aucune activité",
+    "types": {
+      "call": "Appel",
+      "meeting": "Réunion",
+      "email": "E-mail",
+      "note": "Note",
+      "stage_change": "Changement d'étape"
+    },
     "stages": {
       "new": "Nouveau",
       "contacted": "Contacté",
@@ -295,7 +546,10 @@
     "uom": "Unité",
     "template": "Modèle",
     "noCategory": "Sans catégorie",
-    "types": { "template": "Modèle", "variant": "Variante" },
+    "types": {
+      "template": "Modèle",
+      "variant": "Variante"
+    },
     "newCategory": "Nouvelle catégorie",
     "categoryName": "Nom de la catégorie",
     "addCategory": "Ajouter"
@@ -351,6 +605,11 @@
     "reorderQty": "Qté de réappro.",
     "minOrderQty": "Qté min. commande",
     "openingStock": "Stock initial",
+    "purchaseHistory": "Historique des prix d'achat",
+    "purchasePrice": "Prix d'achat",
+    "remainingQty": "Restant en stock",
+    "noPurchases": "Aucun achat enregistré pour cet article",
+    "onHandLayers": "Couches de coût en stock (FIFO)",
     "sections": {
       "general": "Général",
       "variants": "Variantes",

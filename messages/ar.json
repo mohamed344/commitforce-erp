@@ -35,7 +35,9 @@
     "signUp": "إنشاء حساب",
     "toSignUp": "ليس لديك حساب؟ سجّل",
     "toSignIn": "لديك حساب؟ سجّل الدخول",
-    "signingIn": "جارٍ تسجيل الدخول…"
+    "signingIn": "جارٍ تسجيل الدخول…",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور"
   },
   "company": {
     "newTitle": "شركة جديدة",
@@ -99,18 +101,48 @@
     "masterData": "البيانات المرجعية",
     "masterDataDesc": "إدارة قوائم المخزون المرجعية.",
     "cards": {
-      "general": { "title": "عام", "desc": "اسم التطبيق والهوية والشعار والوحدات واللغة." },
-      "crm": { "title": "إدارة العملاء", "desc": "مراحل مسار العملاء المحتملين." },
-      "projects": { "title": "المشاريع", "desc": "حالات المشروع." },
-      "stock": { "title": "المخزون", "desc": "أنواع الحركة والبيانات المرجعية." },
-      "products": { "title": "المنتجات", "desc": "أنواع الأصناف." },
-      "roles": { "title": "الأدوار والفريق", "desc": "أنشئ أدوارًا مخصصة لشركتك." }
+      "general": {
+        "title": "عام",
+        "desc": "اسم التطبيق والهوية والشعار والوحدات واللغة."
+      },
+      "crm": {
+        "title": "إدارة العملاء",
+        "desc": "مراحل مسار العملاء المحتملين."
+      },
+      "projects": {
+        "title": "المشاريع",
+        "desc": "حالات المشروع."
+      },
+      "stock": {
+        "title": "المخزون",
+        "desc": "أنواع الحركة والبيانات المرجعية."
+      },
+      "products": {
+        "title": "المنتجات",
+        "desc": "أنواع الأصناف."
+      },
+      "roles": {
+        "title": "الأدوار والفريق",
+        "desc": "أنشئ أدوارًا مخصصة لشركتك."
+      }
     },
     "sets": {
-      "crm_stage": { "title": "مراحل العميل المحتمل", "desc": "خصّص أعمدة مسار العملاء — إضافة وإعادة تسمية وتلوين وترتيب." },
-      "project_status": { "title": "حالات المشروع", "desc": "خصّص حالات المشروع." },
-      "stock_entry_type": { "title": "أنواع حركة المخزون", "desc": "أعد التسمية والتلوين والترتيب لأنواع الحركة. المفاتيح ثابتة لأنها تتحكم في دفتر المخزون." },
-      "item_type": { "title": "أنواع الأصناف", "desc": "أعد التسمية والتلوين لأنواع الأصناف. مفاتيح القالب والمتغيّر ثابتة." }
+      "crm_stage": {
+        "title": "مراحل العميل المحتمل",
+        "desc": "خصّص أعمدة مسار العملاء — إضافة وإعادة تسمية وتلوين وترتيب."
+      },
+      "project_status": {
+        "title": "حالات المشروع",
+        "desc": "خصّص حالات المشروع."
+      },
+      "stock_entry_type": {
+        "title": "أنواع حركة المخزون",
+        "desc": "أعد التسمية والتلوين والترتيب لأنواع الحركة. المفاتيح ثابتة لأنها تتحكم في دفتر المخزون."
+      },
+      "item_type": {
+        "title": "أنواع الأصناف",
+        "desc": "أعد التسمية والتلوين لأنواع الأصناف. مفاتيح القالب والمتغيّر ثابتة."
+      }
     },
     "options": {
       "label": "التسمية",
@@ -148,10 +180,81 @@
     "edit": "تعديل",
     "delete": "حذف",
     "confirmDelete": "حذف هذا العنصر؟",
-    "back": "رجوع"
+    "back": "رجوع",
+    "next": "التالي"
   },
   "project": {
     "newTitle": "مشروع جديد",
+    "clientName": "العميل",
+    "clientEmail": "بريد العميل",
+    "clientPhone": "هاتف العميل",
+    "clientAddress": "عنوان العميل",
+    "dailyRate": "السعر اليومي",
+    "customer": "العميل",
+    "taxId": "المعرّف الجبائي",
+    "manager": "مدير المشروع",
+    "budget": "الميزانية التقديرية",
+    "currency": "العملة",
+    "siteAddress": "الورشة",
+    "deadline": "الموعد النهائي",
+    "paymentTerms": "شروط الدفع",
+    "type": "النوع",
+    "priority": "الأولوية",
+    "sections": {
+      "project": "المشروع",
+      "client": "العميل",
+      "planning": "التخطيط",
+      "financial": "المالية"
+    },
+    "types": {
+      "installation": "تركيب",
+      "maintenance": "صيانة",
+      "etude": "دراسة",
+      "travaux": "أشغال",
+      "renovation": "تجديد"
+    },
+    "priorities": {
+      "low": "منخفضة",
+      "normal": "عادية",
+      "high": "عالية",
+      "urgent": "عاجلة"
+    },
+    "advancement": "التقدّم",
+    "logStep": "إضافة خطوة",
+    "noSteps": "لا توجد خطوات بعد",
+    "stepType": "النوع",
+    "when": "متى",
+    "byAgent": "بواسطة",
+    "materials": "المواد (من Excel)",
+    "importExcel": "استيراد Excel",
+    "importCsv": "استيراد CSV",
+    "downloadCsv": "تنزيل CSV",
+    "lineTotal": "إجمالي السطر",
+    "importing": "جارٍ الاستيراد…",
+    "importHint": "ارفع ملف CSV بالأصناف (الأعمدة: الوصف، المرجع، الكمية، الوحدة). يُعاد نفس الملف مع إضافة سعر الوحدة والكمية في المخزون وإجمالي السطر وملاحظة التوفر لكل سطر.",
+    "reimport": "إعادة استيراد Excel",
+    "noMaterials": "لم يتم استيراد أي مواد بعد",
+    "designation": "الوصف",
+    "reference": "المرجع",
+    "requiredQty": "المطلوب",
+    "inStock": "في المخزون",
+    "lineStatus": "الحالة",
+    "importSummary": "{matched} متوفر · {insufficient} غير كافٍ · {notFound} غير متوفر",
+    "activityTypes": {
+      "call": "مكالمة",
+      "meeting": "اجتماع",
+      "email": "بريد إلكتروني",
+      "note": "ملاحظة",
+      "milestone": "مرحلة رئيسية",
+      "stage_change": "تغيير المرحلة",
+      "materials_imported": "تم استيراد المواد"
+    },
+    "materialStatuses": {
+      "in_stock": "في المخزون",
+      "insufficient": "مخزون غير كافٍ",
+      "not_found": "غير متوفر بالمخزون",
+      "needs_price": "للاستشارة"
+    },
     "name": "الاسم",
     "code": "الرمز",
     "status": "الحالة",
@@ -164,7 +267,7 @@
     "unit": "الوحدة",
     "unitPrice": "سعر الوحدة",
     "amount": "المبلغ",
-    "noProducts": "لا توجد منتجات لهذا المشروع",
+    "noProducts": "لا توجد منتجات بعد — أنشئ سند طلب (تسعير) لهذا المشروع لإدراج احتياجاته.",
     "consumed": "المستهلك",
     "remaining": "المتبقي",
     "required": "المطلوب",
@@ -174,18 +277,107 @@
     "chooseWarehouse": "المخزن المصدر",
     "issueNow": "الكمية المصروفة",
     "nothingToConsume": "تم استهلاك كل المطلوب بالفعل.",
+    "purchasePrices": "أسعار الشراء",
+    "avgCost": "متوسط التكلفة",
+    "purchasedQty": "الكمية المشتراة",
+    "noPurchasePrices": "لا توجد مشتريات مرتبطة بهذا المشروع لهذا الصنف",
+    "purchaseOrders": "سندات الطلب (التسعير)",
+    "noPurchaseOrders": "لا يوجد تسعير لهذا المشروع بعد",
     "statuses": {
+      "nouveau": "جديد",
+      "chiffrage": "تسعير",
+      "devis_envoye": "تم إرسال العرض",
+      "gagne": "رابح",
+      "en_cours": "قيد التنفيذ",
+      "termine": "مكتمل",
+      "perdu": "خاسر",
       "planning": "تخطيط",
       "active": "نشط",
       "on_hold": "معلّق",
       "completed": "مكتمل",
       "cancelled": "ملغى"
-    }
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "qte": "الكميات / المواد",
+      "consultation": "استشارة",
+      "labor": "الأشغال",
+      "estimate": "التسعير"
+    },
+    "qte": "جدول الكميات",
+    "addQteLine": "إضافة سطر كميات",
+    "editQteLine": "تعديل سطر الكميات",
+    "materialsOf": "مواد",
+    "addMaterial": "إضافة مادة",
+    "editMaterial": "تعديل المادة",
+    "noMaterialsLine": "لا توجد مواد بعد — أضف واحدة أو استورد ملفًا.",
+    "ungroupedMaterials": "مواد غير مجمّعة",
+    "matchedItem": "صنف من المخزون",
+    "noItemMatch": "— لا تطابق —",
+    "autoPrice": "تسعير تلقائي",
+    "autoPriced": "تم تسعير {count} سطر من المخزون.",
+    "qteHint": "لا يوجد جدول كميات. ارفع كراس الشروط، استورد CSV/Excel، أو أضف سطرًا يدويًا.",
+    "defaultQteLine": "عام",
+    "importSummaryGroups": "تم استيراد {lines} سطر مواد ضمن {groups} سطر كميات.",
+    "notes": "ملاحظات",
+    "cdcUpload": "رفع كراس الشروط",
+    "aiNotConfigured": "لم يتم إعداد الاستخراج بالذكاء الاصطناعي بعد — استورد CSV/Excel أو أضف الأسطر يدويًا.",
+    "consultation": "استشارة",
+    "itemsToPrice": "عناصر للتسعير",
+    "noConsultation": "لا توجد عناصر تحتاج تسعيرًا — كل المواد مُسعّرة.",
+    "supplierPrice": "سعر المورّد",
+    "savePrice": "حفظ",
+    "noPriceYet": "بدون سعر",
+    "invalidPrice": "سعر غير صالح",
+    "printConsultation": "طباعة الاستشارة",
+    "consultationHint": "إدخال السعر يُحدّث المادة وسعر شراء الصنف في المخزون.",
+    "prestations": "الأشغال",
+    "labor": "اليد العاملة",
+    "days": "أيام",
+    "addLabor": "إضافة شغل",
+    "editLabor": "تعديل الشغل",
+    "noLabor": "لا توجد أسطر أشغال.",
+    "laborTotal": "إجمالي الأشغال",
+    "estimate": "التسعير",
+    "materialsTotal": "إجمالي المواد",
+    "subtotal": "المجموع الجزئي",
+    "margin": "الهامش",
+    "transport": "النقل",
+    "marginAmount": "قيمة الهامش",
+    "grandTotal": "المجموع الكلي",
+    "saveFooter": "حفظ الهامش/النقل",
+    "saveEstimate": "حفظ التسعير",
+    "savedEstimates": "التسعيرات المحفوظة",
+    "noEstimates": "لا توجد تسعيرات محفوظة.",
+    "printDevis": "طباعة العرض",
+    "devis": "عرض سعر",
+    "ficheConsultation": "ورقة الاستشارة",
+    "steps": {
+      "overview": "المشروع والعميل",
+      "qte": "مسح كراس الشروط · الكميات · تسعير تلقائي",
+      "consultation": "الأسعار الناقصة",
+      "labor": "اليد العاملة",
+      "estimate": "الهامش · العرض"
+    },
+    "cdcScanned": "تم مسح كراس الشروط — تم استخراج {count} سطر كميات.",
+    "cdcNoLines": "لم يتم العثور على أي بنود في المستند.",
+    "facture": "فاتورة / عرض",
+    "printFacture": "طباعة الفاتورة",
+    "offerRef": "رقم العرض",
+    "offerRefPlaceholder": "مثال OFF-2026-001",
+    "offerValidity": "الصلاحية",
+    "offerValidityPlaceholder": "مثال صالح 30 يومًا",
+    "offerNotes": "ملاحظات",
+    "materialsBuyingTotal": "المواد (سعر الشراء)",
+    "materialsSellingTotal": "المواد (سعر البيع)",
+    "buyingPrice": "سعر الشراء",
+    "sellingPrice": "سعر البيع"
   },
   "sales": {
     "tabs": {
       "salesInvoices": "فواتير البيع",
-      "purchaseInvoices": "فواتير الشراء",
+      "purchaseOrders": "سندات الطلب",
+      "purchaseInvoices": "سندات الشراء",
       "customers": "العملاء",
       "suppliers": "الموردون"
     },
@@ -236,6 +428,36 @@
       "draft": "مسودة",
       "validated": "معتمدة",
       "cancelled": "ملغاة"
+    },
+    "newPurchaseOrder": "تسعير جديد",
+    "orderNo": "رقم الطلب",
+    "orderDate": "التاريخ",
+    "chiffrageDate": "تاريخ التسعير",
+    "noOrders": "لا توجد سندات طلب",
+    "requestedQty": "المطلوب",
+    "onHand": "المتوفر فعليًا",
+    "inStock": "في المخزون",
+    "missing": "الناقص",
+    "submitForReview": "إرسال للمراجعة",
+    "submitting": "جارٍ الإرسال…",
+    "reopenToEdit": "إعادة الفتح للتعديل",
+    "markReviewed": "تحديد كمراجَع",
+    "marking": "جارٍ الحفظ…",
+    "generatePurchaseInvoice": "إنشاء سند الشراء",
+    "generating": "جارٍ الإنشاء…",
+    "generateHint": "يُنشئ سند شراء (مسودة) بالكميات الناقصة من المورّد المختار.",
+    "nothingToPurchase": "لا شيء للشراء — كل السطور متوفرة بالكامل في المخزون.",
+    "selectSupplier": "اختر المورّد أولًا.",
+    "noLinesToReview": "أضف صنفًا واحدًا على الأقل قبل الإرسال.",
+    "convertToInvoice": "تحويل إلى سند شراء",
+    "converting": "جارٍ التحويل…",
+    "viewPurchaseInvoice": "عرض سند الشراء",
+    "poStatuses": {
+      "draft": "مسودة",
+      "pending_review": "بانتظار المراجعة",
+      "reviewed": "تمت المراجعة",
+      "converted": "محوّل",
+      "cancelled": "ملغى"
     }
   },
   "roles": {
@@ -245,7 +467,17 @@
     "label": "اسم الدور",
     "key": "المفتاح",
     "description": "الوصف",
-    "noRoles": "لا توجد أدوار مخصصة بعد"
+    "noRoles": "لا توجد أدوار مخصصة بعد",
+    "permissions": "الصلاحيات",
+    "module": "الوحدة",
+    "selectAll": "تحديد الكل",
+    "clearAll": "مسح الكل",
+    "actions": {
+      "view": "عرض",
+      "create": "إنشاء",
+      "edit": "تعديل",
+      "delete": "حذف"
+    }
   },
   "hr": {
     "title": "الموظفون",
@@ -258,6 +490,9 @@
     "email": "البريد الإلكتروني",
     "status": "الحالة",
     "role": "الدور",
+    "createRole": "إنشاء دور…",
+    "roleName": "اسم الدور",
+    "add": "إضافة",
     "userAccount": "حساب المستخدم",
     "noUser": "لا شيء",
     "noRole": "لا شيء",
@@ -278,6 +513,22 @@
     "value": "القيمة",
     "stage": "المرحلة",
     "notes": "ملاحظات",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…",
+    "activities": "النشاط",
+    "logActivity": "تسجيل نشاط",
+    "activityType": "النوع",
+    "when": "الوقت",
+    "description": "الوصف",
+    "agent": "بواسطة",
+    "noActivities": "لا يوجد نشاط بعد",
+    "types": {
+      "call": "مكالمة",
+      "meeting": "اجتماع",
+      "email": "بريد إلكتروني",
+      "note": "ملاحظة",
+      "stage_change": "تغيير المرحلة"
+    },
     "stages": {
       "new": "جديد",
       "contacted": "تم التواصل",
@@ -295,7 +546,10 @@
     "uom": "الوحدة",
     "template": "قالب",
     "noCategory": "بدون فئة",
-    "types": { "template": "قالب", "variant": "متغير" },
+    "types": {
+      "template": "قالب",
+      "variant": "متغير"
+    },
     "newCategory": "فئة جديدة",
     "categoryName": "اسم الفئة",
     "addCategory": "إضافة"
@@ -351,6 +605,11 @@
     "reorderQty": "كمية إعادة الطلب",
     "minOrderQty": "أدنى كمية طلب",
     "openingStock": "الرصيد الافتتاحي",
+    "purchaseHistory": "سجل أسعار الشراء",
+    "purchasePrice": "سعر الشراء",
+    "remainingQty": "المتبقي في المخزون",
+    "noPurchases": "لا توجد مشتريات مسجّلة لهذا الصنف",
+    "onHandLayers": "طبقات التكلفة في المخزون (FIFO)",
     "sections": {
       "general": "عام",
       "variants": "المتغيرات",

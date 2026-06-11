@@ -12,9 +12,12 @@
 export type OptionSetKey =
   | "crm_stage"
   | "project_status"
+  | "project_type"
+  | "project_priority"
   | "stock_entry_type"
   | "item_type"
   | "invoice_status"
+  | "purchase_order_status"
   | "employee_status";
 
 /** Badge tones available in the color picker (mirrors components/data/Badge.tsx). */
@@ -55,13 +58,36 @@ export const OPTION_DEFAULTS: Record<OptionSetKey, OptionSetDef> = {
   },
   project_status: {
     open: true,
-    defaultKey: "planning",
+    defaultKey: "nouveau",
     options: [
-      { key: "planning", labelKey: "project.statuses.planning", tone: "blue" },
-      { key: "active", labelKey: "project.statuses.active", tone: "green" },
-      { key: "on_hold", labelKey: "project.statuses.on_hold", tone: "amber" },
-      { key: "completed", labelKey: "project.statuses.completed", tone: "gray" },
-      { key: "cancelled", labelKey: "project.statuses.cancelled", tone: "red" },
+      { key: "nouveau", labelKey: "project.statuses.nouveau", tone: "gray" },
+      { key: "chiffrage", labelKey: "project.statuses.chiffrage", tone: "blue" },
+      { key: "devis_envoye", labelKey: "project.statuses.devis_envoye", tone: "violet" },
+      { key: "gagne", labelKey: "project.statuses.gagne", tone: "green" },
+      { key: "en_cours", labelKey: "project.statuses.en_cours", tone: "amber" },
+      { key: "termine", labelKey: "project.statuses.termine", tone: "gray" },
+      { key: "perdu", labelKey: "project.statuses.perdu", tone: "red" },
+    ],
+  },
+  project_type: {
+    open: true,
+    defaultKey: "installation",
+    options: [
+      { key: "installation", labelKey: "project.types.installation", tone: "blue" },
+      { key: "maintenance", labelKey: "project.types.maintenance", tone: "green" },
+      { key: "etude", labelKey: "project.types.etude", tone: "violet" },
+      { key: "travaux", labelKey: "project.types.travaux", tone: "amber" },
+      { key: "renovation", labelKey: "project.types.renovation", tone: "gray" },
+    ],
+  },
+  project_priority: {
+    open: false,
+    defaultKey: "normal",
+    options: [
+      { key: "low", labelKey: "project.priorities.low", tone: "gray" },
+      { key: "normal", labelKey: "project.priorities.normal", tone: "blue" },
+      { key: "high", labelKey: "project.priorities.high", tone: "amber" },
+      { key: "urgent", labelKey: "project.priorities.urgent", tone: "red" },
     ],
   },
   stock_entry_type: {
@@ -92,6 +118,18 @@ export const OPTION_DEFAULTS: Record<OptionSetKey, OptionSetDef> = {
       { key: "cancelled", labelKey: "sales.invoiceStatuses.cancelled", tone: "red" },
     ],
   },
+  purchase_order_status: {
+    // Structural: keys drive the chiffrage → review → convert flow (migrations 32, 35).
+    open: false,
+    defaultKey: "draft",
+    options: [
+      { key: "draft", labelKey: "sales.poStatuses.draft", tone: "gray" },
+      { key: "pending_review", labelKey: "sales.poStatuses.pending_review", tone: "amber" },
+      { key: "reviewed", labelKey: "sales.poStatuses.reviewed", tone: "blue" },
+      { key: "converted", labelKey: "sales.poStatuses.converted", tone: "green" },
+      { key: "cancelled", labelKey: "sales.poStatuses.cancelled", tone: "red" },
+    ],
+  },
   employee_status: {
     open: false,
     defaultKey: "active",
@@ -117,6 +155,8 @@ export function slugify(label: string): string {
 export const SET_USAGE: Partial<Record<OptionSetKey, { table: string; column: string }>> = {
   crm_stage: { table: "leads", column: "stage" },
   project_status: { table: "projects", column: "status" },
+  project_type: { table: "projects", column: "project_type" },
+  project_priority: { table: "projects", column: "priority" },
   stock_entry_type: { table: "stock_entries", column: "entry_type" },
   item_type: { table: "items", column: "item_type" },
 };

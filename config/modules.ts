@@ -29,11 +29,11 @@ export type ModuleDef = ModuleMeta & { enabled: boolean };
  * falling back to the env `config.modules` defaults.
  */
 export const moduleCatalog: ModuleMeta[] = [
+  { key: "projects", labelKey: "modules.projects", href: "/projects", Icon: ProjectsIcon },
   { key: "stock", labelKey: "modules.stock", href: "/stock", Icon: StockIcon },
   { key: "sales", labelKey: "modules.sales", href: "/sales", Icon: SalesIcon },
   { key: "crm", labelKey: "modules.crm", href: "/crm", Icon: CrmIcon },
   { key: "production", labelKey: "modules.production", href: "/production", Icon: ProductionIcon },
-  { key: "projects", labelKey: "modules.projects", href: "/projects", Icon: ProjectsIcon },
   { key: "hr", labelKey: "modules.hr", href: "/hr", Icon: HrIcon },
   { key: "reports", labelKey: "modules.reports", href: "/reports", Icon: ReportsIcon },
   { key: "settings", labelKey: "modules.settings", href: "/settings", Icon: SettingsIcon },

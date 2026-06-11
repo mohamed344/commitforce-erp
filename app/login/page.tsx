@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/utils/supabase/client";
 import { config } from "@/lib/config";
+import { EyeIcon, EyeOffIcon } from "@/components/dashboard/icons";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
   const router = useRouter();
   const supabase = createClient();
 
-  const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
+  const [mode] = useState<"signIn" | "signUp">("signIn");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   const isSignUp = mode === "signUp";
 
@@ -117,15 +119,25 @@ export default function LoginPage() {
 
           <label className={label}>
             {t("password")}
-            <input
-              required
-              type="password"
-              minLength={6}
-              autoComplete={isSignUp ? "new-password" : "current-password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={field}
-            />
+            <div className="relative">
+              <input
+                required
+                type={showPw ? "text" : "password"}
+                minLength={6}
+                autoComplete={isSignUp ? "new-password" : "current-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`${field} w-full pr-10`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                aria-label={showPw ? t("hidePassword") : t("showPassword")}
+                className="absolute inset-y-0 right-0 grid w-10 place-items-center text-ink-3 hover:text-ink"
+              >
+                {showPw ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
           </label>
 
           {isSignUp && (
@@ -153,17 +165,6 @@ export default function LoginPage() {
             {busy ? t("signingIn") : isSignUp ? t("signUp") : t("signIn")}
           </button>
         </form>
-
-        <button
-          type="button"
-          onClick={() => {
-            setMode(isSignUp ? "signIn" : "signUp");
-            setError(null);
-          }}
-          className="mt-4 w-full text-center text-[13px] text-ink-3 hover:text-brand"
-        >
-          {isSignUp ? t("toSignIn") : t("toSignUp")}
-        </button>
       </div>
     </main>
   );

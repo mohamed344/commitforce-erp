@@ -20,10 +20,14 @@ type Project = {
   end_date: string | null;
   description: string | null;
 };
-type ItemOpt = { id: string; name: string; uom: string | null; standard_buying_rate: number | null };
-type Line = { id: string; item_id: string; qty: number; rate: number | null; item: { name: string; uom: string | null } | null };
 type Opt = { id: string; name: string };
+// A product needed by the project, aggregated from its bon(s) de commande.
+type ProjProduct = { item_id: string; name: string; uom: string | null; qty: number };
+type RawPoLine = { item_id: string; qty: number; item: { name: string; uom: string | null } | null };
 type ConsumeLine = { item_id: string; name: string; uom: string | null; required: number; consumed: number; remaining: number; issue: string };
+type MatCost = { purchased_qty: number; avg_rate: number | null };
+type ProjPrice = { rate: number; qty: number; posting_date: string; invoice_no: string | null };
+type PurchaseOrder = { id: string; order_no: string | null; order_date: string; status: string };
 
 const field =
   "rounded-[10px] border border-line bg-[#f6f6f8] px-3 py-2 text-[14px] text-ink outline-none focus:border-brand-100";
@@ -31,20 +35,22 @@ const labelCls = "flex flex-col gap-1 text-[12px] font-medium text-ink-2";
 
 export default function ProjectDetailView({ projectId }: { projectId: string }) {
   const tp = useTranslations("project");
+  const ts = useTranslations("sales");
   const tu = useTranslations("ui");
   const router = useRouter();
   const supabase = createClient();
   const { byValue: statusBy } = useOptionSet("project_status");
+  const { byValue: poStatusBy } = useOptionSet("purchase_order_status");
 
   const [project, setProject] = useState<Project | null>(null);
-  const [lines, setLines] = useState<Line[]>([]);
-  const [items, setItems] = useState<ItemOpt[]>([]);
+  // Products needed by the project come (read-only) from its bons de commande.
+  const [products, setProducts] = useState<ProjProduct[]>([]);
   const [consumedBy, setConsumedBy] = useState<Map<string, number>>(new Map());
+  const [matCostBy, setMatCostBy] = useState<Map<string, MatCost>>(new Map());
+  const [pricesByItem, setPricesByItem] = useState<Map<string, ProjPrice[]>>(new Map());
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
   const [whs, setWhs] = useState<Opt[]>([]);
-  const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [editing, setEditing] = useState<Line | null>(null);
-  const [form, setForm] = useState({ item_id: "", qty: "1", rate: "" });
 
   // Consume materials → stock issue
   const [consumeOpen, setConsumeOpen] = useState(false);
@@ -53,72 +59,58 @@ export default function ProjectDetailView({ projectId }: { projectId: string }) 
   const [consumeErr, setConsumeErr] = useState<string | null>(null);
 
   async function load() {
-    const [{ data: p }, { data: pi }, { data: it }, { data: cons }, { data: w }] = await Promise.all([
+    const [{ data: p }, { data: pol }, { data: cons }, { data: w }, { data: mc }, { data: pp }, { data: po }] = await Promise.all([
       supabase.from("projects").select("*").eq("id", projectId).single(),
-      supabase.from("project_items").select("id,item_id,qty,rate, item:items(name,uom)").eq("project_id", projectId),
-      supabase.from("items").select("id,name,uom,standard_buying_rate").order("name"),
+      // Every line across this project's bons de commande.
+      supabase
+        .from("purchase_order_lines")
+        .select("item_id, qty, item:items(name,uom), purchase_orders!inner(project_id)")
+        .eq("purchase_orders.project_id", projectId),
       supabase.from("project_item_consumption").select("item_id,consumed_qty").eq("project_id", projectId),
       supabase.from("warehouses").select("id,name").order("name"),
+      supabase.from("project_material_cost").select("item_id,purchased_qty,avg_rate").eq("project_id", projectId),
+      supabase.from("item_purchase_prices").select("item_id,rate,qty,posting_date,invoice_no").eq("project_id", projectId).order("posting_date", { ascending: false }),
+      supabase.from("purchase_orders").select("id,order_no,order_date,status").eq("project_id", projectId).order("created_at", { ascending: false }),
     ]);
     setProject((p as Project) ?? null);
-    setLines((pi as unknown as Line[]) ?? []);
-    setItems((it as ItemOpt[]) ?? []);
+    // Aggregate the chiffrage lines into one row per item (sum of requested qty).
+    const prodMap = new Map<string, ProjProduct>();
+    for (const r of (pol as unknown as RawPoLine[]) ?? []) {
+      const cur = prodMap.get(r.item_id);
+      if (cur) cur.qty += Number(r.qty);
+      else prodMap.set(r.item_id, { item_id: r.item_id, name: r.item?.name ?? "—", uom: r.item?.uom ?? null, qty: Number(r.qty) });
+    }
+    setProducts(Array.from(prodMap.values()));
     setConsumedBy(new Map(((cons as { item_id: string; consumed_qty: number }[]) ?? []).map((c) => [c.item_id, Number(c.consumed_qty)])));
     setWhs((w as Opt[]) ?? []);
+    setMatCostBy(new Map(((mc as { item_id: string; purchased_qty: number; avg_rate: number | null }[]) ?? []).map((m) => [m.item_id, { purchased_qty: Number(m.purchased_qty), avg_rate: m.avg_rate }])));
+    const pricesMap = new Map<string, ProjPrice[]>();
+    for (const row of (pp as ({ item_id: string } & ProjPrice)[]) ?? []) {
+      const list = pricesMap.get(row.item_id) ?? [];
+      list.push({ rate: row.rate, qty: row.qty, posting_date: row.posting_date, invoice_no: row.invoice_no });
+      pricesMap.set(row.item_id, list);
+    }
+    setPricesByItem(pricesMap);
+    setPurchaseOrders((po as PurchaseOrder[]) ?? []);
   }
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
-  function openNew() {
-    setEditing(null);
-    setForm({ item_id: "", qty: "1", rate: "" });
-    setOpen(true);
-  }
-  function openEdit(l: Line) {
-    setEditing(l);
-    setForm({ item_id: l.item_id, qty: String(l.qty), rate: l.rate != null ? String(l.rate) : "" });
-    setOpen(true);
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    const payload = {
-      project_id: projectId,
-      item_id: form.item_id,
-      qty: Number(form.qty || 0),
-      rate: form.rate ? Number(form.rate) : null,
-    };
-    const res = editing
-      ? await supabase.from("project_items").update({ qty: payload.qty, rate: payload.rate }).eq("id", editing.id)
-      : await supabase.from("project_items").insert(payload);
-    setBusy(false);
-    if (!res.error) {
-      setOpen(false);
-      load();
-    }
-  }
-
-  async function del(l: Line) {
-    await supabase.from("project_items").delete().eq("id", l.id);
-    load();
-  }
-
-  function remainingOf(l: Line): number {
-    return Math.max(0, l.qty - (consumedBy.get(l.item_id) ?? 0));
+  function remainingOf(p: ProjProduct): number {
+    return Math.max(0, p.qty - (consumedBy.get(p.item_id) ?? 0));
   }
 
   function openConsume() {
     setConsumeErr(null);
     setConsumeWh(whs[0]?.id ?? "");
     setConsumeLines(
-      lines
-        .map((l) => {
-          const consumed = consumedBy.get(l.item_id) ?? 0;
-          const remaining = Math.max(0, l.qty - consumed);
-          return { item_id: l.item_id, name: l.item?.name ?? "—", uom: l.item?.uom ?? null, required: l.qty, consumed, remaining, issue: String(remaining) };
+      products
+        .map((p) => {
+          const consumed = consumedBy.get(p.item_id) ?? 0;
+          const remaining = Math.max(0, p.qty - consumed);
+          return { item_id: p.item_id, name: p.name, uom: p.uom, required: p.qty, consumed, remaining, issue: String(remaining) };
         })
         .filter((c) => c.remaining > 0),
     );
@@ -157,18 +149,17 @@ export default function ProjectDetailView({ projectId }: { projectId: string }) 
   }
 
   const money = (v: number | null | undefined) => (v == null ? "—" : Number(v).toLocaleString());
-  const total = lines.reduce((sum, l) => sum + l.qty * (l.rate ?? 0), 0);
 
-  const cols: Column<Line>[] = [
-    { header: tp("products"), cell: (l) => <span className="font-medium text-ink">{l.item?.name ?? "—"}</span> },
-    { header: tp("quantity"), cell: (l) => <span className="tabular-nums">{l.qty}</span> },
-    { header: tp("unit"), cell: (l) => l.item?.uom ?? "—" },
+  const cols: Column<ProjProduct>[] = [
+    { header: tp("products"), cell: (p) => <span className="font-medium text-ink">{p.name}</span> },
+    { header: tp("quantity"), cell: (p) => <span className="tabular-nums">{p.qty}</span> },
+    { header: tp("unit"), cell: (p) => p.uom ?? "—" },
     {
       header: tp("consumed"),
       className: "text-end",
-      cell: (l) => {
-        const consumed = consumedBy.get(l.item_id) ?? 0;
-        const remaining = remainingOf(l);
+      cell: (p) => {
+        const consumed = consumedBy.get(p.item_id) ?? 0;
+        const remaining = remainingOf(p);
         return (
           <span className="tabular-nums">
             {consumed}
@@ -177,11 +168,30 @@ export default function ProjectDetailView({ projectId }: { projectId: string }) 
         );
       },
     },
-    { header: tp("unitPrice"), className: "text-end", cell: (l) => <span className="tabular-nums">{money(l.rate)}</span> },
-    { header: tp("amount"), className: "text-end", cell: (l) => <span className="tabular-nums font-medium">{money(l.qty * (l.rate ?? 0))}</span> },
+    {
+      header: tp("purchasePrices"),
+      className: "text-end",
+      cell: (p) => {
+        const list = pricesByItem.get(p.item_id) ?? [];
+        if (list.length === 0) return <span className="text-ink-4">—</span>;
+        const distinct = Array.from(new Set(list.map((x) => x.rate)));
+        const avg = matCostBy.get(p.item_id)?.avg_rate;
+        return (
+          <span className="tabular-nums text-ink-2" title={avg != null ? `${tp("avgCost")}: ${money(avg)}` : undefined}>
+            {distinct.map((r) => money(r)).join(" · ")}
+          </span>
+        );
+      },
+    },
   ];
 
-  const hasRemaining = lines.some((l) => remainingOf(l) > 0);
+  const hasRemaining = products.some((p) => remainingOf(p) > 0);
+
+  const poCols: Column<PurchaseOrder>[] = [
+    { header: ts("orderNo"), cell: (r) => <span className="font-medium text-ink">{r.order_no ?? "—"}</span> },
+    { header: ts("chiffrageDate"), cell: (r) => r.order_date },
+    { header: ts("status"), cell: (r) => <Badge tone={poStatusBy.get(r.status)?.tone ?? "gray"}>{poStatusBy.get(r.status)?.label ?? r.status}</Badge> },
+  ];
 
   if (!project) return <div className="p-8 text-[14px] text-ink-3">{tu("loading")}</div>;
 
@@ -208,60 +218,34 @@ export default function ProjectDetailView({ projectId }: { projectId: string }) 
 
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-[15px] font-semibold text-ink">{tp("products")}</h2>
-        <div className="flex items-center gap-2">
-          {hasRemaining && (
-            <button type="button" onClick={openConsume} className="rounded-[10px] border border-line px-3.5 py-2 text-[13px] font-semibold text-ink-2 transition-colors hover:border-brand-100 hover:text-brand">
-              {tp("consume")}
-            </button>
-          )}
-          <button type="button" onClick={openNew} className="rounded-[10px] bg-gradient-to-b from-brand to-brand-700 px-3.5 py-2 text-[13px] font-semibold text-white transition-[filter] hover:brightness-[1.03]">
-            + {tp("addProduct")}
+        {hasRemaining && (
+          <button type="button" onClick={openConsume} className="rounded-[10px] border border-line px-3.5 py-2 text-[13px] font-semibold text-ink-2 transition-colors hover:border-brand-100 hover:text-brand">
+            {tp("consume")}
           </button>
-        </div>
+        )}
       </div>
 
-      <ListTable columns={cols} rows={lines} getKey={(l) => l.id} actions={(l) => <RowActions onEdit={() => openEdit(l)} onDelete={() => del(l)} />} />
-
-      {lines.length > 0 && (
-        <div className="mt-3 flex justify-end gap-6 pe-14 text-[14px]">
-          <span className="text-ink-3">{tp("amount")}</span>
-          <span className="font-semibold text-ink tabular-nums">{total.toLocaleString()}</span>
-        </div>
+      {products.length === 0 ? (
+        <p className="rounded-[12px] border border-line bg-white px-4 py-3 text-[13px] text-ink-3">{tp("noProducts")}</p>
+      ) : (
+        <ListTable columns={cols} rows={products} getKey={(p) => p.item_id} />
       )}
 
-      <Modal open={open} onClose={() => setOpen(false)} title={tp("addProduct")}>
-        <form onSubmit={submit} className="flex flex-col gap-3">
-          <label className={labelCls}>
-            {tp("products")}
-            <select
-              required
-              disabled={!!editing}
-              value={form.item_id}
-              onChange={(e) => {
-                const it = items.find((x) => x.id === e.target.value);
-                setForm({ ...form, item_id: e.target.value, rate: form.rate || (it?.standard_buying_rate != null ? String(it.standard_buying_rate) : "") });
-              }}
-              className={field}
-            >
-              <option value="">—</option>
-              {items.map((it) => (
-                <option key={it.id} value={it.id}>{it.name}</option>
-              ))}
-            </select>
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <label className={labelCls}>
-              {tp("quantity")}
-              <input type="number" step="0.001" required value={form.qty} onChange={(e) => setForm({ ...form, qty: e.target.value })} className={field} />
-            </label>
-            <label className={labelCls}>
-              {tp("unitPrice")}
-              <input type="number" step="0.01" value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} className={field} />
-            </label>
-          </div>
-          <FormActions busy={busy} onCancel={() => setOpen(false)} disabled={!form.item_id || !form.qty} />
-        </form>
-      </Modal>
+      {/* Bons de commande (chiffrage) raised for this project. */}
+      <div className="mt-8 mb-3 flex items-center justify-between">
+        <h2 className="text-[15px] font-semibold text-ink">{tp("purchaseOrders")}</h2>
+      </div>
+      {purchaseOrders.length === 0 ? (
+        <p className="rounded-[12px] border border-line bg-white px-4 py-3 text-[13px] text-ink-3">{tp("noPurchaseOrders")}</p>
+      ) : (
+        <ListTable
+          columns={poCols}
+          rows={purchaseOrders}
+          getKey={(r) => r.id}
+          onRowClick={(r) => router.push(`/sales/orders/${r.id}`)}
+          actions={(r) => <RowActions onView={() => router.push(`/sales/orders/${r.id}`)} />}
+        />
+      )}
 
       <Modal open={consumeOpen} onClose={() => setConsumeOpen(false)} title={tp("consumeTitle")}>
         <form onSubmit={submitConsume} className="flex flex-col gap-3">

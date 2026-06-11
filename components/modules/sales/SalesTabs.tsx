@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 const TABS = [
   { key: "salesInvoices", href: "/sales" },
+  { key: "purchaseOrders", href: "/sales/orders" },
   { key: "purchaseInvoices", href: "/sales/purchases" },
   { key: "customers", href: "/sales/customers" },
   { key: "suppliers", href: "/sales/suppliers" },
@@ -16,7 +17,7 @@ export default function SalesTabs() {
   const pathname = usePathname();
   const isActive = (href: string) =>
     href === "/sales"
-      ? pathname === "/sales" || (pathname.startsWith("/sales/") && !pathname.startsWith("/sales/purchases") && !pathname.startsWith("/sales/customers") && !pathname.startsWith("/sales/suppliers"))
+      ? pathname === "/sales" || (pathname.startsWith("/sales/") && !pathname.startsWith("/sales/orders") && !pathname.startsWith("/sales/purchases") && !pathname.startsWith("/sales/customers") && !pathname.startsWith("/sales/suppliers"))
       : pathname.startsWith(href);
 
   return (

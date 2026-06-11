@@ -10,6 +10,7 @@ import Badge from "@/components/data/Badge";
 import RowActions from "@/components/data/RowActions";
 import { useOptionSet } from "@/components/options/useOptionSet";
 import { FormActions } from "@/components/modules/ProjectsView";
+import { slugify } from "@/lib/options";
 
 type Employee = {
   id: string;
@@ -42,6 +43,10 @@ export default function EmployeesView() {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
+  const [creatingRole, setCreatingRole] = useState(false);
+  const [newRoleName, setNewRoleName] = useState("");
+  const [roleBusy, setRoleBusy] = useState(false);
+  const [roleErr, setRoleErr] = useState<string | null>(null);
   const empty = {
     full_name: "",
     position: "",
@@ -71,13 +76,21 @@ export default function EmployeesView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function resetRoleCreator() {
+    setCreatingRole(false);
+    setNewRoleName("");
+    setRoleErr(null);
+  }
+
   function openNew() {
     setEditing(null);
     setForm({ ...empty, status: defaultStatus });
+    resetRoleCreator();
     setOpen(true);
   }
   function openEdit(r: Employee) {
     setEditing(r);
+    resetRoleCreator();
     setForm({
       full_name: r.full_name,
       position: r.position ?? "",
@@ -116,6 +129,27 @@ export default function EmployeesView() {
       setOpen(false);
       load();
     }
+  }
+
+  async function createRole() {
+    const label = newRoleName.trim();
+    if (!label) return;
+    setRoleBusy(true);
+    setRoleErr(null);
+    const { data, error } = await supabase
+      .from("company_roles")
+      .insert({ label, key: slugify(label) || `role_${roles.length + 1}` })
+      .select("id,label")
+      .single();
+    setRoleBusy(false);
+    if (error || !data) {
+      setRoleErr(error?.message ?? "Failed to create role");
+      return;
+    }
+    const created = data as Role;
+    setRoles((rs) => [...rs, created].sort((a, b) => a.label.localeCompare(b.label)));
+    setForm((f) => ({ ...f, company_role_id: created.id }));
+    resetRoleCreator();
   }
 
   async function del(r: Employee) {
@@ -178,15 +212,56 @@ export default function EmployeesView() {
               {t("email")}
               <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={field} />
             </label>
-            <label className={labelCls}>
-              {t("role")}
-              <select value={form.company_role_id} onChange={(e) => setForm({ ...form, company_role_id: e.target.value })} className={field}>
+            <div className={labelCls}>
+              <span>{t("role")}</span>
+              <select
+                value={creatingRole ? "__new__" : form.company_role_id}
+                onChange={(e) => {
+                  if (e.target.value === "__new__") {
+                    setCreatingRole(true);
+                    setRoleErr(null);
+                  } else {
+                    setCreatingRole(false);
+                    setForm({ ...form, company_role_id: e.target.value });
+                  }
+                }}
+                className={field}
+              >
                 <option value="">{t("noRole")}</option>
                 {roles.map((r) => (
                   <option key={r.id} value={r.id}>{r.label}</option>
                 ))}
+                <option value="__new__">+ {t("createRole")}</option>
               </select>
-            </label>
+              {creatingRole && (
+                <>
+                  <div className="mt-1 flex gap-1.5">
+                    <input
+                      autoFocus
+                      value={newRoleName}
+                      onChange={(e) => setNewRoleName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          createRole();
+                        }
+                      }}
+                      placeholder={t("roleName")}
+                      className={`${field} flex-1`}
+                    />
+                    <button
+                      type="button"
+                      onClick={createRole}
+                      disabled={roleBusy || !newRoleName.trim()}
+                      className="shrink-0 rounded-[10px] bg-gradient-to-b from-brand to-brand-700 px-3 py-2 text-[13px] font-semibold text-white transition-[filter] hover:brightness-[1.03] disabled:opacity-60"
+                    >
+                      {t("add")}
+                    </button>
+                  </div>
+                  {roleErr && <p className="text-[12px] text-red-600">{roleErr}</p>}
+                </>
+              )}
+            </div>
             <label className={labelCls}>
               {t("userAccount")}
               <select value={form.user_id} onChange={(e) => setForm({ ...form, user_id: e.target.value })} className={field}>

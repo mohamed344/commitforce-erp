@@ -8,6 +8,8 @@ type Batch = { id: string; batch_no: string; expiry_date: string | null };
 type Serial = { id: string; serial_no: string; status: string };
 type Price = { id: string; rate: number; min_qty: number; price_list: { name: string } | null };
 type Opt = { id: string; name: string };
+type PurchasePrice = { ledger_id: string; posting_date: string; rate: number; qty: number; supplier_name: string | null; invoice_no: string | null };
+type CostLayer = { ledger_id: string; posting_date: string; rate: number; remaining_qty: number };
 
 const field =
   "rounded-[10px] border border-line bg-[#f6f6f8] px-3 py-2 text-[13px] text-ink outline-none focus:border-brand-100";
@@ -30,6 +32,8 @@ export default function ItemExtras({ itemId }: { itemId: string }) {
   const [serials, setSerials] = useState<Serial[]>([]);
   const [prices, setPrices] = useState<Price[]>([]);
   const [priceLists, setPriceLists] = useState<Opt[]>([]);
+  const [purchasePrices, setPurchasePrices] = useState<PurchasePrice[]>([]);
+  const [costLayers, setCostLayers] = useState<CostLayer[]>([]);
 
   const [batch, setBatch] = useState({ batch_no: "", expiry_date: "" });
   const [serial, setSerial] = useState("");
@@ -37,16 +41,20 @@ export default function ItemExtras({ itemId }: { itemId: string }) {
   const [newPl, setNewPl] = useState("");
 
   async function load() {
-    const [{ data: b }, { data: s }, { data: p }, { data: pl }] = await Promise.all([
+    const [{ data: b }, { data: s }, { data: p }, { data: pl }, { data: pp }, { data: cl }] = await Promise.all([
       supabase.from("batches").select("id,batch_no,expiry_date").eq("item_id", itemId).order("batch_no"),
       supabase.from("serial_nos").select("id,serial_no,status").eq("item_id", itemId).order("serial_no"),
       supabase.from("item_prices").select("id,rate,min_qty, price_list:price_lists(name)").eq("item_id", itemId),
       supabase.from("price_lists").select("id,name").order("name"),
+      supabase.from("item_purchase_prices").select("ledger_id,posting_date,rate,qty,supplier_name,invoice_no").eq("item_id", itemId).order("posting_date", { ascending: false }),
+      supabase.from("item_cost_layers").select("ledger_id,posting_date,rate,remaining_qty").eq("item_id", itemId).order("posting_date"),
     ]);
     setBatches((b as Batch[]) ?? []);
     setSerials((s as Serial[]) ?? []);
     setPrices((p as unknown as Price[]) ?? []);
     setPriceLists((pl as Opt[]) ?? []);
+    setPurchasePrices((pp as PurchasePrice[]) ?? []);
+    setCostLayers(((cl as CostLayer[]) ?? []).filter((l) => l.remaining_qty > 0));
   }
   useEffect(() => {
     load();
@@ -95,8 +103,44 @@ export default function ItemExtras({ itemId }: { itemId: string }) {
     <button type="button" onClick={() => delFrom(table, id)} className="text-[12px] text-ink-3 hover:text-red-600">✕</button>
   );
 
+  const money = (v: number | null | undefined) => (v == null ? "—" : Number(v).toLocaleString());
+
   return (
     <>
+      <Section title={t("purchaseHistory")}>
+        {purchasePrices.length === 0 ? (
+          <p className="text-[13px] text-ink-3">{t("noPurchases")}</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              {purchasePrices.map((p) => (
+                <div key={p.ledger_id} className="flex items-center gap-2 text-[13px] text-ink-2">
+                  <span className="w-24 shrink-0 tabular-nums font-semibold text-ink">{money(p.rate)}</span>
+                  <span className="w-16 shrink-0 tabular-nums text-ink-3">×{p.qty}</span>
+                  <span className="flex-1 truncate text-ink-3">
+                    {p.posting_date}{p.supplier_name ? ` · ${p.supplier_name}` : ""}{p.invoice_no ? ` · ${p.invoice_no}` : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {costLayers.length > 0 && (
+              <div className="border-t border-line-2 pt-3">
+                <div className="mb-1.5 text-[12px] font-medium text-ink-2">{t("onHandLayers")}</div>
+                <div className="flex flex-col gap-1">
+                  {costLayers.map((l) => (
+                    <div key={l.ledger_id} className="flex items-center gap-2 text-[13px] text-ink-2">
+                      <span className="w-24 shrink-0 tabular-nums font-semibold text-ink">{money(l.rate)}</span>
+                      <span className="flex-1 text-ink-3">{t("remainingQty")}: <span className="tabular-nums">{l.remaining_qty}</span></span>
+                      <span className="text-ink-4">{l.posting_date}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </Section>
+
       <Section title={t("hasBatch")}>
         <div className="flex flex-col gap-1.5">
           {batches.map((b) => (
